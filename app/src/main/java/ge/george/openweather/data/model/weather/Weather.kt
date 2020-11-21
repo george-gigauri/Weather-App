@@ -1,8 +1,5 @@
 package ge.george.openweather.data.model
 
-
-import com.google.gson.annotations.SerializedName
-
 data class Weather(
     val base: String,
     val clouds: Clouds,
