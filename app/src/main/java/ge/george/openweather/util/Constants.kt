@@ -1,4 +1,4 @@
-package ge.george.openweather
+package ge.george.openweather.util
 
 object Constants {
     val backgrounds = hashMapOf(

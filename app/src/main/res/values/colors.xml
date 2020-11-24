@@ -7,4 +7,10 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <!-- Later Added -->
+    <color name="color_main_white">#000000</color>
+    <color name="pink_main">#FF0077</color>
+    <color name="blue_main">#00B6ED</color>
+    <color name="bottom_sheet_background_color">#ffffff</color>
 </resources>

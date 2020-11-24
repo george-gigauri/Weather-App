@@ -1,4 +1,4 @@
-package ge.george.openweather.data.model
+package ge.george.openweather.data.model.weather
 
 data class Weather(
     val base: String,

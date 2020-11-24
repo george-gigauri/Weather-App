@@ -3,62 +3,50 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.MainActivity">
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/view_pager"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@id/tab_menu"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_height="match_parent">
 
-        <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tab_menu"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/_5sdp"
-            android:padding="@dimen/_1sdp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:tabIndicator="@drawable/tab_custom_indicator"
-            app:tabMode="auto"
-            app:tabPaddingBottom="-5dp"
-            android:background="@android:color/transparent">
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/view_pager"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@id/tab_menu"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_menu"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Today" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:tabIndicator="@drawable/tab_custom_indicator"
+                app:tabMode="fixed"
+                app:tabPaddingBottom="-5dp"
+                android:background="@drawable/top_rounded_bg"
+                android:paddingBottom="@dimen/_6sdp">
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Forecast" />
-        </com.google.android.material.tabs.TabLayout>
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Today" />
 
-        <LinearLayout
-            android:id="@+id/progress"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#A3000000"
-            android:clickable="true"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:focusable="true">
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Forecast" />
+            </com.google.android.material.tabs.TabLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <ProgressBar
-                android:layout_width="@dimen/_42sdp"
-                android:layout_height="@dimen/_42sdp"
-                android:layout_gravity="center" />
+        <include layout="@layout/bottom_sheet_weather_details"
+            android:id="@+id/bottom_sheet" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="@dimen/_12sdp"
-                android:text="Loading, Please wait..."
-                android:textColor="@android:color/white"/>
-        </LinearLayout>
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <include layout="@layout/progress"
+            android:id="@+id/progress" />
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>
