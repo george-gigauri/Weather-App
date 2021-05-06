@@ -1,47 +1,50 @@
 package ge.george.openweather.data.repository
 
-import android.util.Log
-import androidx.constraintlayout.widget.Group
 import ge.george.openweather.data.model.GroupForecast
-import ge.george.openweather.data.model.forecast.Forecast
-import ge.george.openweather.data.model.forecast.MainList
 import ge.george.openweather.data.model.weather.Weather
 import ge.george.openweather.data.network.OpenWeatherAPI
+import ge.george.openweather.data.network.Resource
 import ge.george.openweather.extension.intoWeekDay
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class OpenWeatherRepository @Inject constructor(private val openWeatherAPI: OpenWeatherAPI) {
-    suspend fun getCurrentWeather(q: String) : Weather? = withContext(Dispatchers.IO) {
-        val response = openWeatherAPI.getWeather(q)
-        return@withContext response.body()
-    }
 
-    suspend fun getForecast(q: String) : List<GroupForecast>? = withContext(Dispatchers.IO) {
+    suspend fun getCurrentWeather(q: String): Flow<Resource<Weather?>> = flow {
+        emit(Resource.loading<Weather>())
+        val response = openWeatherAPI.getWeather(q)
+
+        if (!response.isSuccessful)
+            emit(Resource.error<Weather>(response.message()))
+        else if (response.body() == null)
+            emit(Resource.error<Weather>("Response does not have any body!"))
+        else
+            emit(Resource.success(response.body()))
+
+    }.flowOn(Dispatchers.IO)
+
+    suspend fun getForecast(q: String) = flow {
+        emit(Resource.loading())
+
         val response = openWeatherAPI.getForecast(q)
         val body = response.body()
         val result = ArrayList<GroupForecast>()
 
-        if (!response.isSuccessful || body == null)
-            return@withContext emptyList()
+        body?.list?.forEach { list ->
+            val temp = body.list.filter { it.dtTxt.intoWeekDay() == list.dtTxt.intoWeekDay() }
 
-        body.list.forEach {
-            val temp = ArrayList<MainList>()
-
-            for (i in body.list) {
-                if (it.dtTxt.intoWeekDay() == i.dtTxt.intoWeekDay()) {
-                    temp.add(i)
-                }
-            }
-
-            val forecast = GroupForecast(it.dtTxt, temp)
+            val forecast = GroupForecast(list.dtTxt, temp)
             result.add(forecast)
         }
 
-        Log.i("ArrayListResult", result.toString())
-        return@withContext result.distinctBy { it.date.intoWeekDay() }
-    }
+        if (!response.isSuccessful || body == null)
+            emit(Resource.error<List<GroupForecast>>(response.message()))
+        else emit(Resource.success(result.distinctBy { it.date.intoWeekDay() }))
+
+    }.flowOn(Dispatchers.IO)
 }

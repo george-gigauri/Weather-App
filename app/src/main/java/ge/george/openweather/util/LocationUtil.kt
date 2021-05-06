@@ -13,6 +13,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.location.LocationManager.NETWORK_PROVIDER
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.LiveData
@@ -49,6 +50,8 @@ class LocationUtil(
         latitude = location.latitude
         longitude = location.longitude
 
+        Log.i("Location", "lat:$latitude  lng:$longitude")
+
         getCity()
     }
 
@@ -66,11 +69,15 @@ class LocationUtil(
     }
 
     fun getCity() {
-        val geocoder = Geocoder(context, Locale.ENGLISH)
+        if (Geocoder.isPresent()) {
+            val geocoder = Geocoder(context, Locale.ENGLISH)
 
-        if (latitude != null && longitude != null) {
-            val addresses = geocoder.getFromLocation(latitude!!, longitude!!, 1)
-            _city.value = addresses[0].adminArea
+            if (latitude != null && longitude != null) {
+                val addresses = geocoder.getFromLocation(latitude!!, longitude!!, 1)
+                _city.value = addresses[0].adminArea
+            }
+        } else {
+            throw Exception("Geocoder is not available. Are you running this app on emulator? I think so.")
         }
     }
 }

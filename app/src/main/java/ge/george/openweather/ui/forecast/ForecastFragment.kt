@@ -1,20 +1,19 @@
 package ge.george.openweather.ui.forecast
 
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.View
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import coil.load
 import ge.george.openweather.R
+import ge.george.openweather.data.network.Resource
 import ge.george.openweather.databinding.ForecastFragmentBinding
 import ge.george.openweather.extension.isVisible
+import ge.george.openweather.extension.toast
 import ge.george.openweather.ui.MainActivity
 import ge.george.openweather.ui.adapter.weather.WeekDayAdapter
 import ge.george.openweather.util.LocationUtil
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class ForecastFragment : Fragment(R.layout.forecast_fragment) {
     private lateinit var binding: ForecastFragmentBinding
@@ -48,21 +47,31 @@ class ForecastFragment : Fragment(R.layout.forecast_fragment) {
     }
 
     private fun load() {
-        isLoaded = false
         MainActivity.binding.progress.isVisible(true)
-        LocationUtil._city.observe(viewLifecycleOwner) { city->
-            GlobalScope.launch(Dispatchers.IO) {
-                val data = viewModel.getForecast(city)
+        LocationUtil._city.observe(viewLifecycleOwner) { city ->
+            viewModel.getForecast(city)
 
-                if (data != null && !isLoaded) {
-                    GlobalScope.launch(Dispatchers.Main) {
+            viewModel.forecast.observe(viewLifecycleOwner) {
+                when (it.status) {
+                    Resource.Status.SUCCESS -> {
+                        val data = it.data!!
+
                         adapter.clear()
                         adapter.addAll(data)
+
                         binding.weekDaysRv.post {
                             MainActivity.binding.progress.isVisible(false)
                             binding.refreshLayout.isRefreshing = false
-                            isLoaded = true
                         }
+                    }
+
+                    Resource.Status.ERROR -> {
+                        toast(it.message!!)
+                    }
+
+                    Resource.Status.LOADING -> {
+                        MainActivity.binding.progress.isVisible(true)
+                        binding.refreshLayout.isRefreshing = true
                     }
                 }
             }
