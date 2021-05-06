@@ -15,6 +15,7 @@ import java.util.*
 
 @HiltAndroidApp
 class OpenWeatherApp : Application() {
+
     private lateinit var locationUtil: LocationUtil
 
     override fun onCreate() {
@@ -31,7 +32,7 @@ class OpenWeatherApp : Application() {
             Toast.makeText(applicationContext, "Sorry, Dark Mode cuz its night :(", Toast.LENGTH_SHORT).show()
         }
 
-        if (NetworkUtil.getConnectivityStatusString(this) == NetworkUtil.NETWORK_STATUS_NOT_CONNECTED) {
+        if (NetworkUtil.getConnectivityStatusString(this) == NetworkUtil.NetworkType.NETWORK_STATUS_NOT_CONNECTED) {
             val intent = Intent(applicationContext, ErrorActivity::class.java)
             intent.putExtra("error_type", Error.TYPE_NETWORK)
             intent.flags = FLAG_ACTIVITY_NEW_TASK

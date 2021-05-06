@@ -40,8 +40,9 @@ class ErrorActivity : AppCompatActivity() {
 
             retry.setOnClickListener {
                 val status = NetworkUtil.getConnectivityStatusString(applicationContext)
-                if (status == NetworkUtil.TYPE_WIFI ||
-                        status == NetworkUtil.TYPE_MOBILE) {
+                if (status == NetworkUtil.NetworkType.TYPE_WIFI ||
+                        status == NetworkUtil.NetworkType.TYPE_MOBILE
+                ) {
                     val intent = Intent(applicationContext, MainActivity::class.java)
                     intent.flags = FLAG_ACTIVITY_NEW_TASK or FLAG_ACTIVITY_CLEAR_TASK
                     startActivity(intent)
